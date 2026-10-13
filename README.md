@@ -2,7 +2,7 @@
 
 ### 🚀 An Inverse-Design Generative Agent coupled with Predictive Ensembles and Statistically Guaranteed Conformal Guardrails
 **Author:** Ikechukwu Okechi Kamalu, MSc (Biostatistics) & BSc (Microbiology)  
-**Live Interactive Application:** *[👉 Paste your Live Streamlit Application URL Here]*
+**Live Interactive Application:** *[]*
 
 ---
 
