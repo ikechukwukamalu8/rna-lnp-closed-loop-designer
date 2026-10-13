@@ -88,8 +88,8 @@ def generate_optimal_formulation(target_efficiency, rf, xgb, steps=150):
         }
         cand_df = pd.DataFrame([candidate])
         
-        p_rf = float(rf.predict(cand_df)[0])
-        p_xgb = float(xgb.predict(cand_df)[0])
+        p_rf = float(rf.predict(cand_df))
+        p_xgb = float(xgb.predict(cand_df))
         p_ensemble = (p_rf + p_xgb) / 2.0
         
         error = np.abs(target_efficiency - p_ensemble)
@@ -123,7 +123,7 @@ else:
     st.sidebar.subheader("🎯 Target Therapeutic Metrics")
     target_eff = st.sidebar.slider("Desired Liver Transfection Efficiency (%)", 10.0, 100.0, 85.0, step=0.5)
     
-    with St.spinner("🧠 Generative AI Agent searching the macromolecular space..."):
+    with st.spinner("🧠 Generative AI Agent searching the macromolecular space..."):
         generated_recipe = generate_optimal_formulation(target_eff, rf_model, xgb_model)
         
     input_features = pd.DataFrame([generated_recipe])
@@ -133,8 +133,8 @@ else:
     user_encap = float(generated_recipe['encapsulation_efficiency'])
 
 # --- PREDICTION CORE ---
-rf_pred = float(rf_model.predict(input_features)[0])
-xgb_pred = float(xgb_model.predict(input_features)[0])
+rf_pred = float(rf_model.predict(input_features))
+xgb_pred = float(xgb_model.predict(input_features))
 ensemble_pred = (rf_pred + xgb_pred) / 2.0
 lower_bound = float(max(0, ensemble_pred - q_hat))
 upper_bound = float(min(100, ensemble_pred + q_hat))
@@ -167,7 +167,7 @@ with col1:
 with col2:
     st.subheader("📊 Algorithmic Validation Log")
     st.markdown("🧑‍💻 **Behind-the-Scenes Architecture Predictions:**")
-    st.write(f"栽培🌲 **Random Forest Component Model:** `{rf_pred:.2f}%`")
+    st.write(f"🌲 **Random Forest Component Model:** `{rf_pred:.2f}%`")
     st.write(f"⚡ **XGBoost Component Model:** `{xgb_pred:.2f}%`")
     
     st.markdown("#### 🛡️ Active Decision Support Guardrail")
