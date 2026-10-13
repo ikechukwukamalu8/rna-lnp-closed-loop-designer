@@ -67,35 +67,31 @@ def train_ensemble_pipeline():
     cal_scores = np.abs(y_cal - ensemble_cal_pred)
     n_cal = len(X_cal)
     q_level = np.ceil((n_cal + 1) * (1 - alpha)) / n_cal
-    q_hat = np.quantile(cal_scores, q_level, method='higher')
+    q_hat = float(np.quantile(cal_scores, q_level, method='higher'))
     
     return rf_model, xgb_model, q_hat
 
 # Initialize predictive core
 rf_model, xgb_model, q_hat = train_ensemble_pipeline()
 
-# --- THE GENERATIVE ENGINE CORE (Stochastic Optimization Optimization) ---
+# --- THE GENERATIVE ENGINE CORE (Stochastic Optimization) ---
 def generate_optimal_formulation(target_efficiency, rf, xgb, steps=150):
-    # Generative generation loop to optimize features toward target goal
     best_recipe = None
     min_error = float('inf')
     
-    # Randomly initialize a generation pool of candidate formulations
     for _ in range(steps):
         candidate = {
-            'ionizable_lipid_ratio': np.random.uniform(35.0, 60.0),
-            'particle_size_nm': np.random.uniform(30.0, 150.0),
-            'zeta_potential': np.random.uniform(-10.0, 25.0),
-            'encapsulation_efficiency': np.random.uniform(70.0, 99.0)
+            'ionizable_lipid_ratio': float(np.random.uniform(35.0, 60.0)),
+            'particle_size_nm': float(np.random.uniform(30.0, 150.0)),
+            'zeta_potential': float(np.random.uniform(-10.0, 25.0)),
+            'encapsulation_efficiency': float(np.random.uniform(70.0, 99.0))
         }
         cand_df = pd.DataFrame([candidate])
         
-        # Predict effectiveness using current predictive bounds
-        p_rf = rf.predict(cand_df)[0]
-        p_xgb = xgb.predict(cand_df)[0]
+        p_rf = float(rf.predict(cand_df)[0])
+        p_xgb = float(xgb.predict(cand_df)[0])
         p_ensemble = (p_rf + p_xgb) / 2.0
         
-        # Calculate error delta
         error = np.abs(target_efficiency - p_ensemble)
         if error < min_error:
             min_error = error
@@ -127,29 +123,27 @@ else:
     st.sidebar.subheader("🎯 Target Therapeutic Metrics")
     target_eff = st.sidebar.slider("Desired Liver Transfection Efficiency (%)", 10.0, 100.0, 85.0, step=0.5)
     
-    # Trigger Generative Loop
-    with st.spinner("🧠 Generative AI Agent searching the macromolecular space..."):
+    with St.spinner("🧠 Generative AI Agent searching the macromolecular space..."):
         generated_recipe = generate_optimal_formulation(target_eff, rf_model, xgb_model)
         
     input_features = pd.DataFrame([generated_recipe])
-    user_lipid = generated_recipe['ionizable_lipid_ratio']
-    user_size = generated_recipe['particle_size_nm']
-    user_zeta = generated_recipe['zeta_potential']
-    user_encap = generated_recipe['encapsulation_efficiency']
+    user_lipid = float(generated_recipe['ionizable_lipid_ratio'])
+    user_size = float(generated_recipe['particle_size_nm'])
+    user_zeta = float(generated_recipe['zeta_potential'])
+    user_encap = float(generated_recipe['encapsulation_efficiency'])
 
-# --- EVALUATION AND RUN INFRASTRUCTURE ---
-rf_pred = rf_model.predict(input_features)[0]
-xgb_pred = xgb_model.predict(input_features)[0]
+# --- PREDICTION CORE ---
+rf_pred = float(rf_model.predict(input_features)[0])
+xgb_pred = float(xgb_model.predict(input_features)[0])
 ensemble_pred = (rf_pred + xgb_pred) / 2.0
-lower_bound = max(0, ensemble_pred - q_hat)
-upper_bound = min(100, ensemble_pred + q_hat)
+lower_bound = float(max(0, ensemble_pred - q_hat))
+upper_bound = float(min(100, ensemble_pred + q_hat))
 
 # --- VISUAL DASHBOARD LAYOUT ---
 if app_mode == "2. Generative Inverse Design":
     st.subheader("🎨 Generative AI Design Matrix Output")
     st.markdown(f"The AI has generated the following custom biochemical molecular blueprint to hit your target of **{target_eff:.1f}%** efficiency:")
     
-    # Show generated parameters cleanly
     g_col1, g_col2, g_col3, g_col4 = st.columns(4)
     g_col1.metric("Generated Lipid Ratio", f"{user_lipid:.2f} Molar %")
     g_col2.metric("Generated Particle Diameter", f"{user_size:.1f} nm")
@@ -173,7 +167,7 @@ with col1:
 with col2:
     st.subheader("📊 Algorithmic Validation Log")
     st.markdown("🧑‍💻 **Behind-the-Scenes Architecture Predictions:**")
-    st.write(f"🌲 **Random Forest Component Model:** `{rf_pred:.2f}%`")
+    st.write(f"栽培🌲 **Random Forest Component Model:** `{rf_pred:.2f}%`")
     st.write(f"⚡ **XGBoost Component Model:** `{xgb_pred:.2f}%`")
     
     st.markdown("#### 🛡️ Active Decision Support Guardrail")
