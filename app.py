@@ -88,8 +88,8 @@ def generate_optimal_formulation(target_efficiency, rf, xgb, steps=150):
         }
         cand_df = pd.DataFrame([candidate])
         
-        p_rf = float(rf.predict(cand_df))
-        p_xgb = float(xgb.predict(cand_df))
+        p_rf = float(rf.predict(cand_df)[0])
+        p_xgb = float(xgb.predict(cand_df)[0])
         p_ensemble = (p_rf + p_xgb) / 2.0
         
         error = np.abs(target_efficiency - p_ensemble)
@@ -133,8 +133,8 @@ else:
     user_encap = float(generated_recipe['encapsulation_efficiency'])
 
 # --- PREDICTION CORE ---
-rf_pred = float(rf_model.predict(input_features))
-xgb_pred = float(xgb_model.predict(input_features))
+rf_pred = float(rf_model.predict(input_features)[0])
+xgb_pred = float(xgb_model.predict(input_features)[0])
 ensemble_pred = (rf_pred + xgb_pred) / 2.0
 lower_bound = float(max(0, ensemble_pred - q_hat))
 upper_bound = float(min(100, ensemble_pred + q_hat))
