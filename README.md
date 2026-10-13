@@ -2,7 +2,7 @@
 
 ### 🚀 An Inverse-Design Generative Agent coupled with Predictive Ensembles and Statistically Guaranteed Conformal Guardrails
 **Author:** Ikechukwu Okechi Kamalu, MSc (Biostatistics) & BSc (Microbiology)  
-**Live Interactive Application:** *[https://rna-lnp-closed-loop-designer-ccv5qvbjtnpcpq2rwckrtd.streamlit.app/]*
+**Live Interactive Application:** *https://rna-lnp-closed-loop-designer-ccv5qvbjtnpcpq2rwckrtd.streamlit.app/*
 
 ---
 
