@@ -7,22 +7,25 @@ from xgboost import XGBRegressor
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Generative RNA-LNP Designer",
+    page_title="RNA-LNP Formulation Design Prototype",
     page_icon="🧬",
     layout="wide"
 )
 
 # --- TITLE AND SCIENTIFIC HOOK ---
-st.title("🧬 Closed-Loop Generative AI & Predictive RNA-LNP Platform")
+st.title("🧬 RNA-LNP Formulation Design: AI Prototype")
 st.markdown("""
 **Author:** Ikechukwu Okechi Kamalu, MSc  
-*An advanced generative inverse-design and predictive ensemble framework for targeted delivery systems.*
+*An interactive proof of concept combining stochastic candidate search, ensemble regression, and conformal interval calculation.*
 
----
-### 🔬 The Closed-Loop AI Paradigm
-This upgraded platform mirrors the cutting-edge "Design-Test-Learn" pipelines utilized by leading AI4Science research groups:
-1. **The Generative Engine (Inverse Design):** Instead of forcing a human to guess chemical parameter values, this component acts as a generative agent. It scans the chemical landscape to **automatically generate** the ideal LNP recipe needed to achieve a user-defined biological target.
-2. **The Predictive Gatekeeper (Ensemble + Conformal Prediction):** The generated recipe is immediately passed to a blended ensemble of **Random Forest** and **XGBoost** wrapped in **Split-Conformal Prediction** to verify its statistical confidence boundaries.
+> **Research prototype only:** The current implementation trains on simulated data generated from a hand-specified mathematical formula. It does not use experimental LNP measurements and has not been biologically validated. Its scores and intervals must not be interpreted as real transfection outcomes or used to select formulations for synthesis.
+
+### What this prototype demonstrates
+1. **Stochastic candidate search:** In inverse-design mode, the app samples 150 candidate parameter combinations and returns the candidate whose ensemble prediction is closest to a user-specified target score. This is a simple stochastic search, not a generative model or exhaustive optimisation.
+2. **Ensemble regression:** Random Forest and XGBoost regressors are trained on the same formula-generated synthetic target; their predictions are averaged.
+3. **Conformal interval calculation:** A calibration subset of the synthetic data is used to calculate a residual quantile and display an interval. The nominal 95% label is a target level, not evidence of 95% coverage on real biological data.
+
+The four displayed variables are numerical features, not a complete chemical recipe. The current app does not implement experimental feedback or a genuine closed-loop design–test–learn process.
 """)
 
 # --- CACHED DATA & ENSEMBLE TRAINING LOOP ---
@@ -141,8 +144,8 @@ upper_bound = float(min(100, ensemble_pred + q_hat))
 
 # --- VISUAL DASHBOARD LAYOUT ---
 if app_mode == "2. Generative Inverse Design":
-    st.subheader("🎨 Generative AI Design Matrix Output")
-    st.markdown(f"The AI has generated the following custom biochemical molecular blueprint to hit your target of **{target_eff:.1f}%** efficiency:")
+    st.subheader("🎨 Stochastic Search: Candidate Parameter Values")
+    st.markdown(f"The search selected the sampled parameter combination whose synthetic-model prediction is closest to the requested target score of **{target_eff:.1f}%**. This is a computational demonstration, not a validated biological prediction.")
     
     g_col1, g_col2, g_col3, g_col4 = st.columns(4)
     g_col1.metric("Generated Lipid Ratio", f"{user_lipid:.2f} Molar %")
@@ -156,13 +159,13 @@ col1, col2 = st.columns(2)
 with col1:
     st.subheader("🎯 Predictive Gatekeeper Outputs")
     st.metric(
-        label="Blended Ensemble Transfection Consensus", 
+        label="Ensemble prediction (synthetic score)", 
         value=f"{ensemble_pred:.2f}%"
     )
-    st.markdown(f"**95% Statistical Confidence Boundaries:**")
+    st.markdown("**Nominal 95% split-conformal interval (synthetic data; not experimentally validated):**")
     st.success(f" Lower Bound Limit: **{lower_bound:.2f}%**")
     st.success(f" Upper Bound Limit: **{upper_bound:.2f}%**")
-    st.caption(f"Ensemble Conformal Error Margin tolerance verified at: ±{q_hat:.3f}%")
+    st.caption(f"Calibration residual quantile: ±{q_hat:.3f} synthetic score points. Coverage has not been evaluated on an independent test set or experimental data.")
 
 with col2:
     st.subheader("📊 Algorithmic Validation Log")
@@ -173,16 +176,18 @@ with col2:
     st.markdown("#### 🛡️ Active Decision Support Guardrail")
     if ensemble_pred >= 70:
         st.balloons()
-        st.info("🚀 **Recommendation: Synthesize Candidate!** High algorithm consensus indicates a highly stable, high-efficiency structure.")
+        st.info("Illustrative status: predicted synthetic score is at least 70. This does not establish biological efficacy or justify synthesis.")
     elif ensemble_pred < 40:
-        st.error("🛑 **Recommendation: Redesign Formulation.** Consensus prediction falls deep below baseline preclinical delivery requirements.")
+        st.error("Illustrative status: predicted synthetic score is below 40. These thresholds are not validated biological requirements.")
     else:
-        st.warning("⚠️ **Recommendation: Proceed with Limited Wet-Lab Batches.** Borderline properties flag this as a risky formulation.")
+        st.warning("Illustrative status: predicted synthetic score is between 40 and 70. This is not a validated risk classification.")
 
 st.markdown("---")
-st.subheader("🌐 Real-time Pipeline Infrastructure Stream")
+st.subheader("Pipeline input and output summary")
 st.json({
     "Current Pipeline Mode": app_mode,
+    "Data Status": "Formula-generated synthetic data; no experimental LNP measurements used",
+    "Validation Status": "Not biologically or experimentally validated",
     "Active Active Structural Vector": {
         "Lipid Molar Percent": round(user_lipid, 4),
         "Diameter Metrics": round(user_size, 4),
